@@ -7,7 +7,7 @@ import play.api.libs.json.{JsError, JsSuccess, Json}
 import model._
 
 @Singleton
-class WannaTagController @Inject()( components: ControllerComponents ) extends AbstractController( components ) {
+case class WannaTagController @Inject()( components: ControllerComponents ) extends AbstractController( components ) {
 
   def getWannaTags( compare: String, postDate: Long, limit: Int ) = Action {
     // TODO データはDBから取得する
