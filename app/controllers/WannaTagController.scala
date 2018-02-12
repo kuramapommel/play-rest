@@ -3,38 +3,36 @@ package controllers
 import javax.inject._
 
 import play.api.mvc._
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.{JsError, Json}
 import model._
+import service.dao.WannaTagDao
+
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 @Singleton
-case class WannaTagController @Inject()( components: ControllerComponents ) extends AbstractController( components ) {
+case class WannaTagController @Inject()( components: ControllerComponents )( wannaTagDao: WannaTagDao ) extends AbstractController( components ) {
 
-  def getWannaTags( compare: String, postDate: Long, limit: Int ) = Action {
-    // TODO データはDBから取得する
-    val wannatag = WannaTag( 1111, "sample1", "this wannatag is sample.", "sample user A", 1234567890123l, true )
-    val wannatags = Seq( wannatag, wannatag, wannatag, wannatag )
-
-    Ok( Json.toJson( wannatags ) )
+  def getWannaTags( compare: String, postDate: Long, limit: Int ) = Action.async {
+    wannaTagDao.all.map( seq => Ok( Json.toJson( for {
+          ( rWannatagRow, eUpdateWannatagRow ) <- seq
+        } yield WannaTag( rWannatagRow.wannatagId, eUpdateWannatagRow.title, eUpdateWannatagRow.body, "sample user A", rWannatagRow.createDatetime.getMillis, rWannatagRow.authorId.equals( "9999" ) ) ) )
+    )
   }
 
-  def saveWannaTag = Action( parse.json ) { implicit request =>
-    request.body.validate[PostWannaTag].map{
-      case wannatag => {
-        // TODO wannatagをDBに登録する処理を呼ぶ
-        println( wannatag.title )
-        println( wannatag.body )
-        println( wannatag.userId )
-        Ok( "saved!" )
+  def saveWannaTag = Action.async( parse.json ) { implicit request =>
+    request.body.validate[PostWannaTag].map { wannatag =>
+      wannaTagDao.insert( wannatag ).map { _ =>
+        Ok( Json.obj( "result" -> "success" ) )
       }
-    }.recoverTotal{
-      case _ => {
-        BadRequest( "Error!" )
+    }.recoverTotal { e =>
+      Future {
+        BadRequest( Json.obj( "result" -> "failure", "error" -> JsError.toJson( e ) ) )
       }
     }
-    Ok( "saved!")
   }
 
   // TODO wannatagIdを元に対象のwannatagを削除する
-  def deleteWannaTag( wannatagId: Long ) = Action( Ok( "Deleted!" ) )
+  def deleteWannaTag( wannatagId: Long ) = Action.async( wannaTagDao.delete( wannatagId ).map( _ => Ok( "Deleted!" ) ) )
 
 }

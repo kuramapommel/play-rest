@@ -12,7 +12,9 @@ libraryDependencies ++= Seq(
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test,
   "com.typesafe.play" %% "play-slick" % "3.0.3",
   "com.typesafe.play" %% "play-slick-evolutions" % "3.0.3",
-  "org.postgresql" % "postgresql" % "42.2.1"
+  "org.postgresql" % "postgresql" % "42.2.1",
+  "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0",
+  "com.typesafe.slick" %% "slick-codegen" % "3.2.1"
 )
 
 // Adds additional packages into Twirl
