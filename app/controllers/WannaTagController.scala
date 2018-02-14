@@ -32,7 +32,6 @@ case class WannaTagController @Inject()( components: ControllerComponents )( wan
     }
   }
 
-  // TODO wannatagIdを元に対象のwannatagを削除する
   def deleteWannaTag( wannatagId: Long ) = Action.async( wannaTagDao.delete( wannatagId ).map( _ => Ok( "Deleted!" ) ) )
 
 }
