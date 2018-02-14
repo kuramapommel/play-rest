@@ -14,7 +14,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick-evolutions" % "3.0.3",
   "org.postgresql" % "postgresql" % "42.2.1",
   "com.github.tototoshi" %% "slick-joda-mapper" % "2.3.0",
-  "com.typesafe.slick" %% "slick-codegen" % "3.2.1"
+  "com.typesafe.slick" %% "slick-codegen" % "3.2.1",
+  evolutions
 )
 
 // Adds additional packages into Twirl
