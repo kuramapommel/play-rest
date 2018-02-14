@@ -11,12 +11,11 @@ case class WannaTagControllerTest() extends PlaySpec {
 
   private[this] val CONTENT_TYPE_JSON = "application/json"
 
-  private[this] val dbConfig = new GuiceApplicationBuilder().build.injector.instanceOf[DatabaseConfigProvider]
-
   private[this] val WANNATAGS_PATH = "/wannatags"
   "WannaTagController GET wannatags" should {
 
     "get wannatags json from a new instance of controller with default parameter" in {
+      val dbConfig = new GuiceApplicationBuilder().build.injector.instanceOf[DatabaseConfigProvider]
       val wannaTagDao = WannaTagDao( dbConfig )
       val controller = WannaTagController( stubControllerComponents() )( wannaTagDao )
       val json = controller.getWannaTags( "older", -1, -1 ).apply( FakeRequest( GET, WANNATAGS_PATH ) )
@@ -31,6 +30,7 @@ case class WannaTagControllerTest() extends PlaySpec {
   "WannaTagController GET wannatagsFeed" should {
 
     "get wannatagsFeed json from a new instance of controller with default parameter" in {
+      val dbConfig = new GuiceApplicationBuilder().build.injector.instanceOf[DatabaseConfigProvider]
       val wannaTagDao = WannaTagDao( dbConfig )
       val controller = WannaTagController( stubControllerComponents() )( wannaTagDao )
       val json = controller.getWannaTags( "older", -1, -1 ).apply( FakeRequest( GET, WANNATAGS_FEED_PATH ) )
