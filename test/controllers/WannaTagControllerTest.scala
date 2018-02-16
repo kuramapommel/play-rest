@@ -1,23 +1,37 @@
 package controllers
 
+import org.joda.time.DateTime
 import org.scalatestplus.play._
-import play.api.db.slick.DatabaseConfigProvider
-import play.api.inject.guice.GuiceApplicationBuilder
+import org.scalatest.mockito.MockitoSugar
+import org.mockito.Mockito._
+
 import play.api.test._
 import play.api.test.Helpers._
 import service.dao.WannaTagDao
+import service.Tables._
 
-case class WannaTagControllerTest() extends PlaySpec {
+import scala.concurrent.Future
+
+case class WannaTagControllerTest() extends PlaySpec with MockitoSugar {
+
+  import scala.concurrent.ExecutionContext.Implicits.global
 
   private[this] val CONTENT_TYPE_JSON = "application/json"
+
+  private[this] val wannaTagDaoMock = () => {
+    val wannaTagDao = mock[WannaTagDao]
+    val stubDate = Seq( (RWannatagRow( 1111, "9999", DateTime.now ), EUpdateWannatagRow( 1111, "title", "body" ) ) )
+
+    when( wannaTagDao.all ) thenReturn( Future{ stubDate } )
+    wannaTagDao
+  }
 
   private[this] val WANNATAGS_PATH = "/wannatags"
   "WannaTagController GET wannatags" should {
 
     "get wannatags json from a new instance of controller with default parameter" in {
-      val dbConfig = new GuiceApplicationBuilder().build.injector.instanceOf[DatabaseConfigProvider]
-      val wannaTagDao = WannaTagDao( dbConfig )
-      val controller = WannaTagController( stubControllerComponents() )( wannaTagDao )
+
+      val controller = WannaTagController( stubControllerComponents() )( wannaTagDaoMock() )
       val json = controller.getWannaTags( "older", -1, -1 ).apply( FakeRequest( GET, WANNATAGS_PATH ) )
 
       status( json ) mustBe OK
@@ -30,9 +44,7 @@ case class WannaTagControllerTest() extends PlaySpec {
   "WannaTagController GET wannatagsFeed" should {
 
     "get wannatagsFeed json from a new instance of controller with default parameter" in {
-      val dbConfig = new GuiceApplicationBuilder().build.injector.instanceOf[DatabaseConfigProvider]
-      val wannaTagDao = WannaTagDao( dbConfig )
-      val controller = WannaTagController( stubControllerComponents() )( wannaTagDao )
+      val controller = WannaTagController( stubControllerComponents() )( wannaTagDaoMock() )
       val json = controller.getWannaTags( "older", -1, -1 ).apply( FakeRequest( GET, WANNATAGS_FEED_PATH ) )
 
       status( json ) mustBe OK
