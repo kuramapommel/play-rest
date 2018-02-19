@@ -2,7 +2,7 @@
 
 CREATE SEQUENCE r_wannatag_wannatag_id_seq;
 CREATE TABLE r_wannatag (
-  wannatag_id int DEFAULT nextval('r_wannatag_wannatag_id_seq')　PRIMARY KEY,  -- WannaTag ID
+  wannatag_id int DEFAULT nextval('r_wannatag_wannatag_id_seq') PRIMARY KEY,  -- WannaTag ID
   author_id varchar(80) NOT NULL,  -- author's user ID
   create_datetime timestamp with time zone NOT NULL  -- WannaTag create datetime
 );
